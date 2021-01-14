@@ -3,68 +3,79 @@ import QtQuick.Window 2.14
 import QmlCustomItem 1.0
 
 Window {
+    id: root
     visible: true
     width: 640
     height: 480
     title: qsTr("Hello World")
 
-    QCircleMeter
+    property int rootdata: 0
+    onRootdataChanged:
     {
-        id: qMeter
-        anchors.centerIn: parent
-        width: 200
-        height: 200
-        data: 0
+        if (rootdata > 100) rootdata = 100
+        if (rootdata < 0) rootdata = 0
+    }
 
-        Behavior on data
+    QSensorClock
+    {
+        id: clock
+        anchors.centerIn: parent
+        dataUpdate: root.rootdata
+        updateInterval: 2
+        thickness: 25
+        textSize: 20
+    }
+
+
+    Row
+    {
+        anchors
         {
-            NumberAnimation
+            horizontalCenter: parent.horizontalCenter
+            top: parent.top
+        }
+        spacing: 2
+        Repeater
+        {
+            model: [5, 20, 45, 80]
+            delegate: QRec
             {
-                duration: 250
-                alwaysRunToEnd: true
-                onStopped: rec.isHovered = false
+                idata: modelData
+                onClicked: root.rootdata += modelData
             }
         }
     }
 
-    Text {
-        id: name
-
-        anchors.centerIn: qMeter
-        font.pixelSize: 25
-        font.bold: true
-
-        text: ((qMeter.data < 10) ? (" " + qMeter.data) : qMeter.data) + "%"
+    Row
+    {
+        anchors
+        {
+            horizontalCenter: parent.horizontalCenter
+            bottom: parent.bottom
+        }
+        spacing: 2
+        Repeater
+        {
+            model: [-5, -20, -45, -80]
+            delegate: QRec
+            {
+                idata: modelData
+                onClicked: root.rootdata += modelData
+            }
+        }
     }
 
-
-    Rectangle
+    QRec
     {
-        id: rec
-        property bool isHovered: false
         width: 100
         height: 100
-        color: isHovered ? "blue" : "red"
-
-        MouseArea
+        anchors
         {
-            anchors.fill: parent
-            hoverEnabled: true
-            onEntered:
-            {
-                qMeter.data += 5
-                parent.isHovered = true
-            }
-            onExited:
-            {
-                qMeter.data -= 5
-                parent.isHovered = false
-            }
-            onClicked:
-            {
-                qMeter.data += 50
-            }
+            verticalCenter: root.verticalCenter
+            right: root.right
         }
+
+        idata: root.rootdata
     }
 
 }

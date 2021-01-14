@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>QSensorClock.qml</file>
+        <file>QRec.qml</file>
     </qresource>
 </RCC>

@@ -7,7 +7,7 @@ QCircleMeter::QCircleMeter(QQuickItem *parent)
     , m_bottomColor { DEFAULT_BOTTOM_COLOR }
     , m_centerColor { DEFAULT_CENTER_COLOR }
     , m_thickness{ 20 }
-    , m_data { 20 }
+    , m_data { 0 }
 {
 
 }
@@ -40,7 +40,8 @@ void QCircleMeter::paint(QPainter *painter)
 
     // Draw the last layer
     painter->setBrush(center);
-    painter->drawEllipse(boundingRect().REDUCE_SIZE(width() * (100 - m_thickness) / 100));
+    painter->drawEllipse(boundingRect().REDUCE_SIZE((width() * m_thickness / 200)));    // = radius * (100-thickness) %
+                                                                                        // = reduce(width / 2 * thickness %)
 }
 
 QColor QCircleMeter::centerColor() const
@@ -127,6 +128,8 @@ void QCircleMeter::setThickness(int thickness)
     if (m_thickness == thickness)
         return;
 
+    if (thickness >= 50) thickness = 50;
+    if (thickness <= 10) thickness = 10;
     m_thickness = thickness;
     emit thicknessChanged(m_thickness);
 }
